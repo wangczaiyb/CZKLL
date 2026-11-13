@@ -221,7 +221,7 @@ button:disabled { opacity: .35; cursor: default; }
 .compare-banner { margin-bottom: 12px; padding: 10px; border: 1px solid #39D8FF44; font-size: 11px; }
 @keyframes pin-pulse { 50% { filter: drop-shadow(0 0 14px #D4A42866); } }
 @keyframes bar-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@view-transition { navigation: auto; }
+@view-transition { navigation: none; }
 @media(max-width:1650px) {
   .ex-layout { grid-template-columns: 265px minmax(350px,1fr) 306px; gap: 11px; }
   .banner-identity>span:last-child { display: none; }
