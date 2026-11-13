@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0F1A30">
+  <meta name="view-transition" content="same-origin">
+  <title>东北抗联红色遗址数智地图｜黑龙江篇</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="maplibre-gl.css?v=1dae8925ee59">
+  <link rel="stylesheet" href="exhibit.css?v=143bc84133e8">
+  <link rel="stylesheet" href="study-route.css?v=6c3cf50f3de4">
+  <link rel="stylesheet" href="site-navigation.css?v=9c1ba241e84a">
+</head>
+<body data-province="黑龙江">
+  <header class="ex-header">
+    <a class="ex-brand" href="index.html"><span class="site-logo" role="img" aria-label="重走抗联路"></span></a>
+    <nav aria-label="主导航"><a href="index.html">首页</a><a href="heilongjiang.html" class="active" aria-current="page">黑龙江</a><a href="jilin.html">吉林</a><a href="liaoning.html">辽宁</a><a href="neimenggu.html">内蒙古东部</a></nav>
+    <button id="studyEditorOpen" class="study-entry">研学路线编辑</button><button id="guideOpen" class="guide-button">⌕ 智能导览</button>
+  </header>
+  <section class="province-banner ex-heading">
+    <div class="banner-identity"><span class="province-shape" id="provinceShape"></span><span class="site-logo" role="img" aria-label="重走抗联路"></span></div>
+    <div class="banner-titles"><h1>黑龙江<span>抗联遗址地图</span></h1><p>东北三省一区 · 抗联遗址数字档案</p></div>
+    <div class="banner-note"><span>抗联主战场 · 北疆红色丰碑</span><small id="headingData"></small></div>
+  </section>
+  <main class="ex-layout">
+    <aside class="ex-catalog glass">
+      <section class="legend-section"><div class="section-heading"><h2>遗址图例</h2><button id="mappingInfo" class="text-button">分类依据 ↗</button></div><div id="categoryLegend" class="category-legend"></div></section>
+      <label class="search-box"><span>⌕</span><input id="exSearch" type="search" placeholder="搜索遗址、城市、人物、事件" aria-label="完整台账检索"></label>
+      <div class="hot-search">热门 <button data-query="杨靖宇">杨靖宇</button><button data-query="密营">抗联密营</button><button data-query="烈士">烈士纪念</button></div>
+      <div class="catalog-tabs"><button class="active" data-mode="all">全部</button><button data-mode="people">人物</button><button data-mode="route">路线</button><button data-mode="vr">VR</button></div>
+      <div class="catalog-filters">
+        <select id="exKind" aria-label="原始类型"><option value="">原始类型</option></select>
+        <select id="exCity" aria-label="城市"><option value="">全部城市</option></select>
+        <select id="exStatus" aria-label="定位状态"><option value="">全部状态</option><option value="located">已有公开坐标</option><option value="pending">坐标待核验</option><option value="conflict">资料差异</option><option value="vr">有VR资源</option><option value="digitized">数字化已核验</option><option value="unknownDigital">数字化待核验</option></select>
+      </div>
+      <details class="city-index-section"><summary class="section-heading"><h2>城市目录</h2><span id="cityIndexCount"></span></summary><div id="cityIndex" class="city-index"></div></details>
+      <div class="catalog-title"><h2>黑龙江遗址索引</h2><span id="exCount"></span></div>
+      <div class="ex-results" id="exResults" aria-label="完整台账虚拟列表"></div>
+      <div class="catalog-pagination"><button id="exPrev" aria-label="向前浏览">←</button><span id="exPage"></span><button id="exNext" aria-label="向后浏览">→</button><button id="exReset">重置</button></div>
+      <p class="catalog-note" id="catalogNote"></p>
+    </aside>
+    <section class="ex-map">
+      <div id="exMap" role="application" aria-label="黑龙江省真实行政区与中文道路交互地图"></div>
+      <canvas id="regionConnections" class="region-connections" aria-hidden="true"></canvas>
+      <div id="featuredRegions" class="featured-regions"></div>
+      <div class="map-tools">
+        <button data-map="three" class="active">◈<span>3D地形</span></button><button data-map="two">▱<span>2D平面</span></button>
+        <button data-map="satellite">◉<span>卫星总览</span></button><button data-map="road">≋<span>道路模式</span></button>
+        <button data-map="buildings">▥<span>建筑轮廓</span></button><button data-map="local">⌗<span>本地边界</span></button><button data-map="northeast">⌖<span>东北地区</span></button>
+        <button data-map="home">⌂<span>省区全览</span></button><button data-map="terrain" class="active">⌁<span>高程开关</span></button>
+        <button data-map="zoomIn" aria-label="放大地图">＋</button><button data-map="zoomOut" aria-label="缩小地图">−</button><button data-map="fullscreen" aria-label="地图全屏">⛶</button>
+      </div>
+      <div class="ex-map-message" id="mapMessage" role="status">正在加载中文底图与真实行政边界…</div>
+      <div id="locationContext" class="location-context" hidden></div>
+      <div class="map-legend"><i></i> 按来源记录聚合 · B级点位为设施参考位置</div>
+    </section>
+    <aside class="province-stats" aria-label="遗址数字档案与统计"><div class="archive-heading"><span>数字档案</span><small>来源可追溯 · 位置分级展示</small></div><dialog id="heritageDialog" class="heritage-dialog" open><button id="closeHeritageDialog" class="dialog-close" aria-label="关闭遗址面板">×</button><aside class="ex-detail" id="exDetail"></aside><button id="compareToggle" class="detail-vr compare-action">时空对读</button></dialog><details class="regional-analysis"><summary>查看省区统计与分布</summary>
+      <section class="stats-card total-card glass"><h2><span id="statsScope">黑龙江省</span>台账记录</h2><strong id="statTotal">0</strong><p id="statsLocationCount"></p><small id="statsSourceNote"></small></section>
+      <section class="stats-card glass"><div class="section-heading"><h2>重点城市分布</h2><button id="moreCities" class="text-button">全部城市</button></div><div id="cityBars" class="city-bars"></div></section>
+      <section class="stats-card glass"><h2>遗址类别概览</h2><div class="category-chart"><div id="categoryDonut" class="category-donut" role="img" aria-label="按真实筛选记录计算的类别环形图"><span><b id="donutTotal">0</b><small>来源记录</small></span></div><div id="categoryStats" class="category-stats"></div></div></section>
+      <section class="stats-card insight-card glass"><h2>数据洞察</h2><div id="dataInsights"></div></section>
+    </details></aside>
+  </main>
+  <footer class="digital-footer">
+    <div class="digital-feature-bar"><button id="photoToggle" class="active">图片点位表达</button><button id="layerToggle">空间分布可视化</button><button id="statsReset">分类统计分析</button><button id="digitalToggle">红色资源数字化</button><button id="routeToggle">研学路线</button><button id="vrToggle">VR导览</button><button id="peopleGraph">人物关联</button><button id="eventToggle">历史事件</button><button id="timelineToggle">时间轴</button></div>
+    <section class="ex-statistics" id="exStatistics" aria-label="当前筛选记录概览"></section>
+    <section class="ex-timeline glass" id="timelinePanel" hidden><h2>黑龙江抗联历史记忆</h2><div id="timelineEvents"></div></section>
+  </footer>
+
+  <dialog id="exDialog" class="ex-dialog"><button class="dialog-close" id="closeExDialog" aria-label="关闭">×</button><div id="exDialogContent"></div></dialog>
+  <div id="exToast" class="ex-toast" role="status" hidden></div>
+  <script src="map-services.js?v=292bb95d41fe"></script><script src="maplibre-gl.js?v=06b392de571c"></script><script src="chinese-style.js?v=538e230d933e"></script><script src="vendor/gsap.min.js?v=28033e449a31"></script><script src="museum-catalog.js?v=0c587c6125ac"></script><script src="entity-registry.js?v=851e4e0787fc"></script><script src="geography-candidates.js?v=bc07f12d9843"></script>
+  <script src="heilongjiang-data.js?v=37a03be8c60f"></script><script src="image-associations.js?v=14ed9f191fba"></script><script src="heritage-images.js?v=05c60d552967"></script><script src="coordinate-reviews.js?v=7dad9896415c"></script><script src="heritage-records.js?v=bf2ba663ccc5"></script><script src="exhibit-design.js?v=065b007a45f8"></script><script src="exhibit-store.js?v=dffb88d812f7"></script><script src="exhibit-list.js?v=d2dae66f153a"></script><script src="exhibit-statistics.js?v=c22b04d9c902"></script>
+  <script src="vendor/three.min.js?v=170c6789f432"></script><script src="exhibit-markers-3d.js?v=18af29aa8a6b"></script><script src="pilot-geometry.js?v=f90b948d9d74"></script><script src="exhibit-map.js?v=94e53274adbf"></script><script src="exhibit-flat-map.js?v=03e6db993ea7"></script><script src="exhibit-experience.js?v=8a072209f930"></script><script src="exhibit-explore.js?v=6b64c0dfd8b6"></script><script src="study-route-data.js?v=0013b35eae77"></script><script src="study-route-store.js?v=c35d3bc75937"></script><script src="study-route-map.js?v=0645a9eeb036"></script><script src="study-route-export.js?v=2cc5a1dad911"></script><script src="study-route-workspace.js?v=3b4a988bc2ac"></script><script src="exhibit-app.js?v=0c84f7db85a8"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+/* Shared navigation for the home, regional maps and legacy archive links. */
+.site-logo {
+  display: block;
+  width: 168px;
+  height: 48px;
+  flex-shrink: 0;
+  background: url(assets/brand-title.webp) center / contain no-repeat;
+}
+.banner-identity .site-logo { width: 138px; height: 46px; }
+.museum-header, .ex-header {
+  height: 58px;
+  padding: 0 2vw;
+  gap: 24px;
+  background: #0F1A30f5;
+  border-bottom: 1px solid #D4A42844;
+  backdrop-filter: blur(12px);
+}
+.museum-header .museum-nav, .ex-header nav {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  gap: clamp(20px, 3vw, 52px);
+  justify-content: center;
+}
+.museum-header .museum-nav a, .ex-header nav a {
+  display: flex;
+  align-items: center;
+  position: relative;
+  white-space: nowrap;
+  font: 15px STSong, 'Songti SC', SimSun, serif;
+  color: #C2C8D6;
+}
+.museum-header .museum-nav a.active, .ex-header nav a.active { color: #f3d59d; }
+.museum-header .museum-nav a.active::after, .ex-header nav a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #D4A428;
+}
+.museum-header .museum-brand, .ex-header .ex-brand { font-size: 21px; color: #FFFFFF; }
+.museum-header .brand-star, .ex-header .ex-brand>b { color: #D4A428; }
+@media (max-width: 900px) {
+  .museum-header, .ex-header { gap: 14px; }
+  .museum-header .museum-nav, .ex-header nav { gap: 16px; }
+  .museum-header .museum-nav a, .ex-header nav a { font-size: 12px; }
+}
+@media (max-width: 700px) {
+  .museum-header, .ex-header { height: auto; min-height: 58px; flex-wrap: wrap; padding: 10px 4vw 0; gap: 8px 14px; }
+  .museum-header .museum-brand, .ex-header .ex-brand { margin-right: auto; }
+  .site-logo { width: 150px; height: 43px; }
+  .museum-header .mobile-menu { display: none; }
+  .museum-header .museum-nav, .ex-header nav {
+    order: 5;
+    flex-basis: 100%;
+    position: static;
+    display: flex;
+    flex-direction: row;
+    height: 38px;
+    gap: 0;
+    padding: 0;
+    justify-content: space-between;
+    overflow: visible;
+    background: transparent;
+    border: 0;
+    backdrop-filter: none;
+  }
+  .museum-header .museum-nav a, .ex-header nav a { width: auto; padding: 5px 0; font-size: 12px; }
+  .museum-header .museum-nav a.active::after { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}
