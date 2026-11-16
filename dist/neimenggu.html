@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0F1A30">
+  <meta name="theme-color" content="#76252D">
   <meta name="view-transition" content="same-origin">
   <title>东北抗联红色遗址数智地图｜内蒙古东部篇</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="maplibre-gl.css?v=1dae8925ee59">
-  <link rel="stylesheet" href="exhibit.css?v=c0641df06689">
+  <link rel="stylesheet" href="exhibit.css?v=da5ad4fd9d8a">
   <link rel="stylesheet" href="study-route.css?v=6c3cf50f3de4">
   <link rel="stylesheet" href="site-navigation.css?v=9c1ba241e84a">
-</head>
+<link rel="stylesheet" href="heritage-theme.css?v=45fc21d8e4c7"></head>
 <body data-province="内蒙古">
   <header class="ex-header">
     <a class="ex-brand" href="index.html"><span class="site-logo" role="img" aria-label="重走抗联路"></span></a>
     <nav aria-label="主导航"><a href="index.html">首页</a><a href="heilongjiang.html">黑龙江</a><a href="jilin.html">吉林</a><a href="liaoning.html">辽宁</a><a href="neimenggu.html" class="active" aria-current="page">内蒙古东部</a></nav>
-    <button id="studyEditorOpen" class="study-entry">研学路线编辑</button><button id="guideOpen" class="guide-button">⌕ 智能导览</button>
+    <div class="header-actions"><button id="studyEditorOpen" class="study-entry">研学路线编辑</button><button id="archiveOpen" class="archive-entry">全部档案</button><button id="guideOpen" class="guide-button" aria-label="智能导览">⌕ 导览</button></div>
   </header>
   <section class="province-banner ex-heading">
     <div class="banner-identity"><span class="province-shape" id="provinceShape"></span><span class="site-logo" role="img" aria-label="重走抗联路"></span></div>
@@ -25,7 +25,7 @@
   </section>
   <main class="ex-layout">
     <aside class="ex-catalog glass">
-      <section class="legend-section"><div class="section-heading"><h2>遗址图例</h2><button id="mappingInfo" class="text-button">分类依据 ↗</button></div><div id="categoryLegend" class="category-legend"></div></section>
+      <section class="legend-section"><div class="section-heading"><h2>遗址资源库</h2><button id="mappingInfo" class="text-button">分类依据 ↗</button></div><div id="categoryLegend" class="category-legend"></div></section>
       <label class="search-box"><span>⌕</span><input id="exSearch" type="search" placeholder="搜索遗址、城市、人物、事件" aria-label="完整台账检索"></label>
       <div class="hot-search">热门 <button data-query="杨靖宇">杨靖宇</button><button data-query="密营">抗联密营</button><button data-query="烈士">烈士纪念</button></div>
       <div class="catalog-tabs"><button class="active" data-mode="all">全部</button><button data-mode="people">人物</button><button data-mode="route">路线</button><button data-mode="vr">VR</button></div>
@@ -70,8 +70,8 @@
 
   <dialog id="exDialog" class="ex-dialog"><button class="dialog-close" id="closeExDialog" aria-label="关闭">×</button><div id="exDialogContent"></div></dialog>
   <div id="exToast" class="ex-toast" role="status" hidden></div>
-  <script src="map-services.js?v=292bb95d41fe"></script><script src="maplibre-gl.js?v=06b392de571c"></script><script src="chinese-style.js?v=538e230d933e"></script><script src="vendor/gsap.min.js?v=28033e449a31"></script><script src="museum-catalog.js?v=0c587c6125ac"></script><script src="entity-registry.js?v=851e4e0787fc"></script><script src="geography-candidates.js?v=bc07f12d9843"></script>
-  <script src="neimenggu-data.js?v=3f89aae66022"></script><script src="image-associations.js?v=14ed9f191fba"></script><script src="heritage-images.js?v=05c60d552967"></script><script src="coordinate-reviews.js?v=7dad9896415c"></script><script src="heritage-records.js?v=bf2ba663ccc5"></script><script src="exhibit-design.js?v=065b007a45f8"></script><script src="exhibit-store.js?v=dffb88d812f7"></script><script src="exhibit-list.js?v=d2dae66f153a"></script><script src="exhibit-statistics.js?v=c22b04d9c902"></script>
-  <script src="vendor/three.min.js?v=170c6789f432"></script><script src="exhibit-markers-3d.js?v=18af29aa8a6b"></script><script src="pilot-geometry.js?v=f90b948d9d74"></script><script src="exhibit-map.js?v=94e53274adbf"></script><script src="exhibit-flat-map.js?v=03e6db993ea7"></script><script src="exhibit-experience.js?v=8a072209f930"></script><script src="exhibit-explore.js?v=6b64c0dfd8b6"></script><script src="study-route-data.js?v=0013b35eae77"></script><script src="study-route-store.js?v=c35d3bc75937"></script><script src="study-route-map.js?v=0645a9eeb036"></script><script src="study-route-export.js?v=2cc5a1dad911"></script><script src="study-route-workspace.js?v=3b4a988bc2ac"></script><script src="exhibit-app.js?v=0c84f7db85a8"></script>
+  <script src="map-services.js?v=9ec25ff36a03"></script><script src="maplibre-gl.js?v=06b392de571c"></script><script src="chinese-style.js?v=538e230d933e"></script><script src="vendor/gsap.min.js?v=28033e449a31"></script><script src="museum-catalog.js?v=0c587c6125ac"></script><script src="entity-registry.js?v=851e4e0787fc"></script><script src="geography-candidates.js?v=bc07f12d9843"></script>
+  <script src="neimenggu-data.js?v=3f89aae66022"></script><script src="image-associations.js?v=14ed9f191fba"></script><script src="heritage-images.js?v=05c60d552967"></script><script src="coordinate-reviews.js?v=7dad9896415c"></script><script src="heritage-records.js?v=bf2ba663ccc5"></script><script src="exhibit-design.js?v=6b1119809b0c"></script><script src="exhibit-store.js?v=dffb88d812f7"></script><script src="exhibit-list.js?v=d2dae66f153a"></script><script src="exhibit-statistics.js?v=c22b04d9c902"></script>
+  <script src="pilot-geometry.js?v=f90b948d9d74"></script><script src="exhibit-map.js?v=ed05ba367221"></script><script src="exhibit-flat-map.js?v=f0f03696f56a"></script><script src="exhibit-experience.js?v=4b35ae687113"></script><script src="exhibit-explore.js?v=6b64c0dfd8b6"></script><script src="study-route-data.js?v=0013b35eae77"></script><script src="study-route-store.js?v=c35d3bc75937"></script><script src="study-route-map.js?v=620262d838ff"></script><script src="study-route-export.js?v=2cc5a1dad911"></script><script src="study-route-workspace.js?v=3b4a988bc2ac"></script><script src="exhibit-app.js?v=8a25a9f7ba61"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0F1A30">
+  <meta name="theme-color" content="#76252D">
   <meta name="view-transition" content="same-origin">
   <title>东北抗联红色遗址数智地图｜{{CHAPTER}}篇</title>
   <link rel="icon" href="data:,">
@@ -11,12 +11,12 @@
   <link rel="stylesheet" href="exhibit.css">
   <link rel="stylesheet" href="study-route.css">
   <link rel="stylesheet" href="site-navigation.css">
-</head>
+<link rel="stylesheet" href="heritage-theme.css"></head>
 <body data-province="{{NAME}}">
   <header class="ex-header">
     <a class="ex-brand" href="index.html"><span class="site-logo" role="img" aria-label="重走抗联路"></span></a>
     <nav aria-label="主导航">{{NAV}}</nav>
-    <button id="studyEditorOpen" class="study-entry">研学路线编辑</button><button id="guideOpen" class="guide-button">⌕ 智能导览</button>
+    <div class="header-actions"><button id="studyEditorOpen" class="study-entry">研学路线编辑</button><button id="archiveOpen" class="archive-entry">全部档案</button><button id="guideOpen" class="guide-button" aria-label="智能导览">⌕ 导览</button></div>
   </header>
   <section class="province-banner ex-heading">
     <div class="banner-identity"><span class="province-shape" id="provinceShape"></span><span class="site-logo" role="img" aria-label="重走抗联路"></span></div>
@@ -25,7 +25,7 @@
   </section>
   <main class="ex-layout">
     <aside class="ex-catalog glass">
-      <section class="legend-section"><div class="section-heading"><h2>遗址图例</h2><button id="mappingInfo" class="text-button">分类依据 ↗</button></div><div id="categoryLegend" class="category-legend"></div></section>
+      <section class="legend-section"><div class="section-heading"><h2>遗址资源库</h2><button id="mappingInfo" class="text-button">分类依据 ↗</button></div><div id="categoryLegend" class="category-legend"></div></section>
       <label class="search-box"><span>⌕</span><input id="exSearch" type="search" placeholder="搜索遗址、城市、人物、事件" aria-label="完整台账检索"></label>
       <div class="hot-search">热门 <button data-query="杨靖宇">杨靖宇</button><button data-query="密营">抗联密营</button><button data-query="烈士">烈士纪念</button></div>
       <div class="catalog-tabs"><button class="active" data-mode="all">全部</button><button data-mode="people">人物</button><button data-mode="route">路线</button><button data-mode="vr">VR</button></div>
@@ -72,6 +72,6 @@
   <div id="exToast" class="ex-toast" role="status" hidden></div>
   <script src="map-services.js"></script><script src="maplibre-gl.js"></script><script src="chinese-style.js"></script><script src="vendor/gsap.min.js"></script><script src="museum-catalog.js"></script><script src="entity-registry.js"></script><script src="geography-candidates.js"></script>
   <script src="{{DATA_FILE}}"></script><script src="image-associations.js"></script><script src="heritage-images.js"></script><script src="coordinate-reviews.js"></script><script src="heritage-records.js"></script><script src="exhibit-design.js"></script><script src="exhibit-store.js"></script><script src="exhibit-list.js"></script><script src="exhibit-statistics.js"></script>
-  <script src="vendor/three.min.js"></script><script src="exhibit-markers-3d.js"></script><script src="pilot-geometry.js"></script><script src="exhibit-map.js"></script><script src="exhibit-flat-map.js"></script><script src="exhibit-experience.js"></script><script src="exhibit-explore.js"></script><script src="study-route-data.js"></script><script src="study-route-store.js"></script><script src="study-route-map.js"></script><script src="study-route-export.js"></script><script src="study-route-workspace.js"></script><script src="exhibit-app.js"></script>
+  <script src="pilot-geometry.js"></script><script src="exhibit-map.js"></script><script src="exhibit-flat-map.js"></script><script src="exhibit-experience.js"></script><script src="exhibit-explore.js"></script><script src="study-route-data.js"></script><script src="study-route-store.js"></script><script src="study-route-map.js"></script><script src="study-route-export.js"></script><script src="study-route-workspace.js"></script><script src="exhibit-app.js"></script>
 </body>
 </html>

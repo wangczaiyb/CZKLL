@@ -4,10 +4,10 @@ class ExhibitMap {
     this.onSelect = onSelect;
     this.notify = notify;
     this.onCity = onCity;
-    this.baseMode = 'road';
+    this.baseMode = 'satellite';
     this.dataVersion = 0;
     this.clusterRequest = 0;
-    this.health = {road: false, satellite: false, terrain: false, vector: false};
+    this.health = {satellite: false, terrain: false, vector: false};
     this.cityMarkers = [];
     this.pendingIntent = null;
     this.markers = new Map();
@@ -28,14 +28,19 @@ class ExhibitMap {
     });
     this.map.addControl(new maplibregl.NavigationControl({showZoom: false}), 'top-right');
     this.map.addControl(new maplibregl.ScaleControl({maxWidth: 120, unit: 'metric'}), 'bottom-left');
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.destroyed) return;
+      this.map.resize();
+      this.map.triggerRepaint();
+    });
+    this.resizeObserver.observe(document.getElementById('exMap'));
     this.map.once('style.load', () => this.setup());
     this.map.on('sourcedata', event => {
-      if (this.destroyed || event.tile?.state !== 'loaded') return;
-      const mode = {'road-raster':'road', 'nasa-imagery':'satellite', 'terrain-dem':'terrain', 'openmaptiles':'vector'}[event.sourceId];
-      if (!mode) return;
+      if (this.destroyed) return;
+      const mode = {'nasa-imagery':'satellite', 'terrain-dem':'terrain', 'openmaptiles':'vector'}[event.sourceId];
+      if (!mode || event.tile?.state !== 'loaded') return;
       this.health[mode] = true;
       if (mode === this.baseMode || (mode === 'vector' && this.baseMode === 'road')) clearTimeout(this.serviceTimer);
-      if (mode === 'vector' && !this.vectorAvailable) { this.vectorAvailable = true; this.applyBaseVisibility(); }
       this.updateMessage();
     });
     this.watchService();
@@ -45,10 +50,6 @@ class ExhibitMap {
       if (event.sourceId === 'terrain-dem' || /terrain-dem|terrarium/.test(message)) {
         this.health.terrain = false;
         if (this.ready) this.setTerrain(false);
-      }
-      if (event.sourceId === 'openmaptiles' || /openfreemap/.test(message)) {
-        this.vectorAvailable = false;
-        if (this.ready) this.applyBaseVisibility();
       }
     });
   }
@@ -69,36 +70,20 @@ class ExhibitMap {
     if (!this.ready) return;
     const satellite = this.baseMode === 'satellite';
     this.map.setLayoutProperty('satellite-imagery', 'visibility', satellite ? 'visible' : 'none');
-    this.map.setLayoutProperty('road-raster', 'visibility', !this.vectorAvailable ? 'visible' : 'none');
-    for (const layer of this.baseLayers) {
-      if (this.map.getLayer(layer.id)) this.map.setLayoutProperty(layer.id, 'visibility', this.vectorAvailable ? (layer.layout?.visibility || 'visible') : 'none');
-    }
-    this.map.setPaintProperty('province-tint', 'fill-opacity', satellite ? 0 : .09);
+    this.map.setPaintProperty('province-tint', 'fill-opacity', 0);
   }
 
   prepareStyle(style) {
-    this.baseLayers = structuredClone(style.layers);
     for (const layer of style.layers) {
       const paint = layer.paint || {};
       if (layer.id === 'natural_earth') paint['raster-opacity'] = .2;
-      if (layer.type === 'background') paint['background-color'] = '#0F1A30';
-      if (layer.type === 'fill') {
-        if (/water/.test(layer.id)) paint['fill-color'] = '#123E59';
-        else if (/park|wood|forest|grass/.test(layer.id)) paint['fill-color'] = '#24633A';
-        else if (/residential|industrial|building/.test(layer.id)) paint['fill-color'] = '#314D49';
-        else paint['fill-color'] = '#1C3C36';
-      }
       if (layer.type === 'symbol' && layer.layout?.['text-field']) {
-        paint['text-color'] = '#FFFFFF';
-        paint['text-halo-color'] = '#0F1A30';
+        paint['text-color'] = '#39322F';
+        paint['text-halo-color'] = '#F2EDE3';
         paint['text-halo-width'] = 1.3;
         if (/^label_(city|town|village|other)/.test(layer.id)) layer.minzoom = Math.max(layer.minzoom || 0, 9);
         // Country labels outside the exhibit are omitted at the regional view.
         if (/country/.test(layer.id)) layer.layout.visibility = 'none';
-      }
-      if (layer.type === 'line' && /road|highway/.test(layer.id) && paint['line-color']) {
-        paint['line-color'] = '#C2C8D6';
-        paint['line-opacity'] = ['interpolate', ['linear'], ['zoom'], 5, .16, 12, .5, 16, .85];
       }
       if (layer.type === 'fill-extrusion') layer.layout = {...layer.layout, visibility: 'none'};
       layer.paint = paint;
@@ -115,9 +100,9 @@ class ExhibitMap {
     const firstLabel = map.getStyle().layers.find(layer => layer.type === 'symbol')?.id;
     map.addLayer({id: 'province-tint', type: 'fill', source: 'exhibit-province', paint: {'fill-color': '#24633A', 'fill-opacity': .42}}, firstLabel);
     map.addLayer({id: 'county-boundary', type: 'line', source: 'exhibit-counties', minzoom: 7, paint: {'line-color': '#c4ae7c', 'line-width': 0.65, 'line-opacity': 0.6}});
-    map.addLayer({id: 'city-boundary', type: 'line', source: 'exhibit-cities', paint: {'line-color': '#C2C8D6', 'line-width': .9, 'line-opacity': .8, 'line-dasharray': [3, 2]}});
-    map.addLayer({id: 'province-glow', type: 'line', source: 'exhibit-province', paint: {'line-color': '#39D8FF', 'line-width': 7, 'line-blur': 4, 'line-opacity': .65}});
-    map.addLayer({id: 'province-boundary', type: 'line', source: 'exhibit-province', paint: {'line-color': '#39D8FF', 'line-width': 1.8}});
+    map.addLayer({id: 'city-boundary', type: 'line', source: 'exhibit-cities', paint: {'line-color': '#E4D8C5', 'line-width': .8, 'line-opacity': .55, 'line-dasharray': [3, 2]}});
+    map.addLayer({id: 'province-glow', type: 'line', source: 'exhibit-province', paint: {'line-color': '#B99A65', 'line-width': 4, 'line-blur': 2, 'line-opacity': .14}});
+    map.addLayer({id: 'province-boundary', type: 'line', source: 'exhibit-province', paint: {'line-color': '#D4B16F', 'line-width': 1.6}});
     map.addLayer({id: 'city-hover', type: 'fill', source: 'exhibit-cities', paint: {'fill-color': '#f0c478', 'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.18, 0]}});
     map.addSource('exhibit-city-labels', {type: 'geojson', data: {
       type: 'FeatureCollection', features: database.cities.features.filter(feature => feature.properties.centroid).map(feature => ({
@@ -128,12 +113,10 @@ class ExhibitMap {
       'text-field': ['get', 'name'], 'text-font': ['Noto Sans Regular'], 'text-size': 12, 'text-allow-overlap': false
     }, paint: {'text-color': '#FFFFFF', 'text-halo-color': '#0F1A30', 'text-halo-width': 1.5}});
     const service = MAP_SERVICES;
-    map.addSource('road-raster', {type:'raster', ...service.road, tileSize:256});
-    map.addLayer({id:'road-raster', type:'raster', source:'road-raster', paint:{'raster-saturation':-.7,'raster-brightness-max':.65}}, firstLabel);
     map.addSource('terrain-dem', {type:'raster-dem', ...service.terrain, tileSize:256});
     map.addLayer({id:'terrain-shade', type:'hillshade', source:'terrain-dem', paint:{'hillshade-exaggeration':.35,'hillshade-shadow-color':'#10263b','hillshade-highlight-color':'#b7cce0'}}, firstLabel);
     map.addSource('nasa-imagery', {type:'raster', ...service.satellite, tileSize:256});
-    map.addLayer({id:'satellite-imagery', type:'raster', source:'nasa-imagery', layout:{visibility:'none'}}, firstLabel);
+    map.addLayer({id:'satellite-imagery', type:'raster', source:'nasa-imagery', layout:{visibility:'none'}, paint:{'raster-fade-duration':500}}, firstLabel);
     map.addLayer({id: 'real-buildings', type: 'fill-extrusion', source: 'openmaptiles', 'source-layer': 'building', minzoom: 14,
       filter: ['has', 'render_height'], layout: {visibility: 'none'}, paint: {
         'fill-extrusion-color': '#c6ad7d', 'fill-extrusion-height': ['get', 'render_height'],
@@ -153,17 +136,17 @@ class ExhibitMap {
     map.addLayer({id: 'context-points', type: 'circle', source: 'context-points', paint: {'circle-color': ['get', 'color'], 'circle-radius': 3, 'circle-opacity': .2}});
     map.on('click', 'context-points', event => this.onSelect(event.features[0].properties.id, true));
     map.addLayer({id: 'heritage-clusters', type: 'circle', source: 'heritage-points', filter: ['has', 'point_count'], paint: {
-      'circle-color': '#cfa15c', 'circle-radius': ['step', ['get', 'point_count'], 18, 10, 23], 'circle-stroke-color': '#ffe2a1', 'circle-stroke-width': 2
+      'circle-color': '#39322F', 'circle-radius': ['step', ['get', 'point_count'], 18, 10, 23], 'circle-stroke-color': '#D4B16F', 'circle-stroke-width': 2
     }});
     map.addLayer({id: 'heritage-counts', type: 'symbol', source: 'heritage-points', filter: ['has', 'point_count'], layout: {
       'text-field': ['get', 'point_count_abbreviated'], 'text-font': ['Noto Sans Bold'], 'text-size': 12
-    }, paint: {'text-color': '#4c231c'}});
+    }, paint: {'text-color': '#E4D8C5'}});
     map.addSource('study-route', {type: 'geojson', data: this.emptyCollection()});
     map.addSource('selected-scope', {type: 'geojson', data: this.emptyCollection()});
     map.addLayer({id: 'selected-scope-fill', type: 'fill', source: 'selected-scope', paint: {'fill-color': '#d3a562', 'fill-opacity': 0.14}});
     map.addLayer({id: 'selected-scope-line', type: 'line', source: 'selected-scope', paint: {'line-color': '#f4d59c', 'line-width': 2, 'line-dasharray': [3, 2]}});
     map.addLayer({id: 'study-route-shadow', type: 'line', source: 'study-route', paint: {'line-color': '#463521', 'line-width': 7, 'line-opacity': 0.7}});
-    map.addLayer({id: 'study-route-line', type: 'line', source: 'study-route', paint: {'line-color': '#eac684', 'line-width': 3}});
+    map.addLayer({id: 'study-route-line', type: 'line', source: 'study-route', paint: {'line-color': '#D4B16F', 'line-width': 3}});
     map.on('click', 'study-route-line', () => this.animateRoute(this.routePoints));
     map.on('click', 'heritage-clusters', event => this.openCluster(event));
     map.on('mouseenter', 'heritage-clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
@@ -188,12 +171,6 @@ class ExhibitMap {
     map.on('dragstart', () => { this.overview = false; });
     map.on('zoomstart', event => { if (event.originalEvent) this.overview = false; });
     map.on('resize', () => { if (this.overview && !this.studyMode) this.home(0); });
-    map.on('zoomend', () => {
-      if (map.getZoom() >= 14.5 && !this.modelLayer && window.THREE) {
-        this.modelLayer = new ExhibitMarkers3D(this);
-        map.addLayer(this.modelLayer);
-      }
-    });
     map.on('sourcedata', event => { if (event.sourceId === 'heritage-points' && map.isSourceLoaded('heritage-points')) this.updateMarkers(); });
     this.ready = true;
     document.querySelector('[data-map="local"]').classList.remove('active');
@@ -210,7 +187,7 @@ class ExhibitMap {
     this.refresh();
     this.updateMessage();
     window.dispatchEvent(new Event('exhibit-map-ready'));
-    if (this.pendingMode) this.setBaseMode(this.pendingMode);
+    this.setBaseMode(this.pendingMode || this.baseMode);
     const intent = this.pendingIntent;
     this.pendingIntent = null;
     if (intent) this[intent.action](intent.value);
@@ -244,7 +221,7 @@ class ExhibitMap {
     if (this.studyMode) return;
     const records = this.store.matching();
     const located = records.filter(record => record.longitude !== null).length;
-    const service = this.baseMode === 'satellite' ? (this.health.satellite ? '卫星影像' : '卫星连接中') : (this.health.vector ? '中文矢量' : this.health.road ? 'OSM道路' : '道路连接中');
+    const service = this.baseMode === 'satellite' ? (this.health.satellite ? '卫星影像' : '卫星连接中') : (this.health.vector ? '中文矢量' : '中文底图连接中');
     document.getElementById('mapMessage').textContent = `${service} · ${this.terrain && this.health.terrain ? '真实DEM地形' : '地形待连接或已关闭'} · ${records.length} 条档案 / ${located} 条公开位置`;
     document.querySelectorAll('.gis-city-name').forEach(label => { label.hidden = this.map.getZoom() >= 10; });
   }
@@ -318,7 +295,6 @@ class ExhibitMap {
       const button = document.createElement('button');
       button.className = 'ex-pin';
       button.style.setProperty('--category-color', EXHIBIT_DESIGN.category(record.kind).color);
-      button.innerHTML = '<i></i><span class="beam"></span>';
       button.title = record.name + (colocated.length > 1 ? ` · 同址 ${colocated.length} 条来源记录` : '');
       button.setAttribute('aria-label', record.name);
       button.addEventListener('mouseenter', () => { const current = this.coordinateGroups?.get(key)?.[0]; if (current) this.pointPopup(current, coordinates); });
@@ -330,7 +306,7 @@ class ExhibitMap {
         this.onSelect(current[0].id, true);
         if (current.length > 1) this.pointPopup(current[0], coordinates);
       });
-      const marker = new maplibregl.Marker({element: button, anchor: 'bottom'}).setLngLat(coordinates).addTo(this.map);
+      const marker = new maplibregl.Marker({element: button, anchor: 'center'}).setLngLat(coordinates).addTo(this.map);
       this.markers.set(key, marker);
     }
     for (const [key, marker] of this.markers) {
@@ -376,7 +352,7 @@ class ExhibitMap {
     }
     content.addEventListener('mouseenter', () => clearTimeout(this.hoverTimer));
     content.addEventListener('mouseleave', () => this.popup?.remove());
-    this.popup = new maplibregl.Popup({offset: 32, closeButton: false, maxWidth: '270px'}).setLngLat(coordinates).setDOMContent(content).addTo(this.map);
+    this.popup = new maplibregl.Popup({offset: 32, closeButton: false, maxWidth: '320px'}).setLngLat(coordinates).setDOMContent(content).addTo(this.map);
   }
 
   async openCluster(event) {
@@ -407,7 +383,7 @@ class ExhibitMap {
     });
     container.append(expand);
     this.popup?.remove();
-    this.popup = new maplibregl.Popup({offset: 20}).setLngLat(cluster.geometry.coordinates).setDOMContent(container).addTo(this.map);
+    this.popup = new maplibregl.Popup({offset: 20, maxWidth: '320px'}).setLngLat(cluster.geometry.coordinates).setDOMContent(container).addTo(this.map);
   }
 
   focus(record) {
@@ -539,6 +515,7 @@ class ExhibitMap {
     this.markers.forEach(marker => marker.remove());
     this.clusterMarkers.forEach(marker => marker.remove());
     cancelAnimationFrame(this.routeFrame); clearTimeout(this.hoverTimer);
+    this.resizeObserver.disconnect();
     this.popup?.remove(); this.map.remove();
   }
 }

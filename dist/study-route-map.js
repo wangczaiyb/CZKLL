@@ -3,7 +3,7 @@ window.StudyRouteMap = class StudyRouteMap {
   constructor(engine,catalog,actions) {
     this.engine=engine;this.catalog=catalog;this.actions=actions;
     this.byId=new Map(catalog.records.map(record=>[record.id,record]));
-    this.markers=new Map();this.handlers=[];this.terrain=engine.terrain;this.minimumZoom=5;
+    this.markers=new Map();this.handlers=[];
     this.frame=null;this.version=0;this.selectedId=null;
     engine.studyMode=true;
     this.move=()=>{if(!this.frame)this.frame=requestAnimationFrame(()=>{this.frame=null;this.updatePins();});};
@@ -31,19 +31,19 @@ window.StudyRouteMap = class StudyRouteMap {
     }
     const empty=StudyRoutes.empty();
     map.addSource('study-boundaries',{type:'geojson',data:this.catalog.boundaries});
-    map.addLayer({id:'study-boundaries',type:'line',source:'study-boundaries',paint:{'line-color':'#7ba3ba','line-width':1,'line-opacity':.45}});
+    map.addLayer({id:'study-boundaries',type:'line',source:'study-boundaries',paint:{'line-color':'#B99A65','line-width':1,'line-opacity':.45}});
     map.addSource('study-library',{type:'geojson',data:empty,cluster:true,clusterRadius:38,clusterMaxZoom:12});
-    map.addLayer({id:'study-library-clusters',type:'circle',source:'study-library',filter:['has','point_count'],paint:{'circle-color':'#193b50','circle-radius':['step',['get','point_count'],16,20,21,100,26],'circle-stroke-color':'#c5a567','circle-stroke-width':1.5}});
-    map.addLayer({id:'study-library-counts',type:'symbol',source:'study-library',filter:['has','point_count'],layout:{'text-field':['get','point_count_abbreviated'],'text-font':['Noto Sans Regular'],'text-size':12},paint:{'text-color':'#f5d997'}});
-    map.addLayer({id:'study-library-points',type:'circle',source:'study-library',filter:['!',['has','point_count']],paint:{'circle-radius':['case',['get','selected'],7,4],'circle-color':['match',['get','grade'],'村屯级','#e4be70','乡镇级','#64d5cf','#6897c7'],'circle-stroke-color':'#d6e6ec','circle-stroke-width':1,'circle-opacity':.8}});
+    map.addLayer({id:'study-library-clusters',type:'circle',source:'study-library',filter:['has','point_count'],paint:{'circle-color':'#39322F','circle-radius':['step',['get','point_count'],16,20,21,100,26],'circle-stroke-color':'#B99A65','circle-stroke-width':1.5}});
+    map.addLayer({id:'study-library-counts',type:'symbol',source:'study-library',filter:['has','point_count'],layout:{'text-field':['get','point_count_abbreviated'],'text-font':['Noto Sans Regular'],'text-size':12},paint:{'text-color':'#E4D8C5'}});
+    map.addLayer({id:'study-library-points',type:'circle',source:'study-library',filter:['!',['has','point_count']],paint:{'circle-radius':['case',['get','selected'],7,4],'circle-color':['match',['get','grade'],'村屯级','#D4B16F','乡镇级','#C2AE87','#A08E70'],'circle-stroke-color':'#E4D8C5','circle-stroke-width':1,'circle-opacity':.8}});
     map.addSource('study-selected',{type:'geojson',data:empty});
     map.addLayer({id:'study-selected',type:'circle',source:'study-selected',paint:{'circle-radius':7,'circle-color':'#c5a05d','circle-stroke-width':2,'circle-stroke-color':'#ffdda0','circle-opacity':.85}});
     this.listen('click','study-selected',event=>{if(this.claimClick(event)){const group=this.selectedGroups().find(item=>item.key===event.features[0].properties.key);if(group)this.chooseGroup(group);}});
     map.addSource('study-route-lines',{type:'geojson',data:empty,lineMetrics:true});
-    map.addLayer({id:'study-route-glow',type:'line',source:'study-route-lines',paint:{'line-color':['case',['get','active'],'#e9bd65','#4e9fa9'],'line-width':['case',['get','active'],8,4],'line-blur':5,'line-opacity':.4}});
-    map.addLayer({id:'study-route-roads',type:'line',source:'study-route-lines',filter:['==',['get','status'],'road'],paint:{'line-color':['case',['get','active'],'#f0cb82','#6ab5bd'],'line-width':['case',['get','active'],3.5,2],'line-opacity':.95}});
-    map.addLayer({id:'study-route-schematic',type:'line',source:'study-route-lines',filter:['==',['get','status'],'schematic'],paint:{'line-color':['case',['get','active'],'#d7bd89','#6d9ab4'],'line-width':2.5,'line-dasharray':[3,2],'line-opacity':.85}});
-    map.addLayer({id:'study-route-flow',type:'line',source:'study-route-lines',filter:['==',['get','active'],true],paint:{'line-color':'#fff4ce','line-width':1.5,'line-dasharray':[0,4,3],'line-opacity':.7}});
+    map.addLayer({id:'study-route-glow',type:'line',source:'study-route-lines',paint:{'line-color':['case',['get','active'],'#D4B16F','#9A835D'],'line-width':['case',['get','active'],6,3],'line-blur':3,'line-opacity':.18}});
+    map.addLayer({id:'study-route-roads',type:'line',source:'study-route-lines',filter:['==',['get','status'],'road'],paint:{'line-color':['case',['get','active'],'#D4B16F','#B99A65'],'line-width':['case',['get','active'],3.5,2],'line-opacity':.95}});
+    map.addLayer({id:'study-route-schematic',type:'line',source:'study-route-lines',filter:['==',['get','status'],'schematic'],paint:{'line-color':['case',['get','active'],'#D4B16F','#9A835D'],'line-width':2.5,'line-dasharray':[3,2],'line-opacity':.85}});
+    map.addLayer({id:'study-route-flow',type:'line',source:'study-route-lines',filter:['==',['get','active'],true],paint:{'line-color':'#F2E0B7','line-width':1.5,'line-dasharray':[0,4,3],'line-opacity':.7}});
     this.listen('click','study-library-points',event=>{if(!this.claimClick(event))return;const rows=[...new Set(event.features.map(feature=>feature.properties.id))].map(id=>this.byId.get(id));if(rows.length>1)this.actions.choose(rows.map(record=>({id:record.id,label:record.name+' · '+record.sheet+'第'+record.row+'行'})),'选择该位置的来源记录');else this.actions.archive(rows[0].id);});
     this.listen('click','study-library-clusters',event=>this.openCluster(event));
     for(const id of ['study-library-points','study-library-clusters']){
@@ -52,13 +52,12 @@ window.StudyRouteMap = class StudyRouteMap {
     }
     for(const event of ['moveend','zoomend','resize'])this.listen(event,null,this.move);
     for(const event of ['mousedown','touchstart','zoomstart','rotatestart'])this.listen(event,null,this.interrupt);
-    this.models=new ExhibitMarkers3D(this);this.models.id='study-route-models';map.addLayer(this.models);
     let phase=0;
     this.flowTimer=setInterval(()=>{
       if(document.hidden||matchMedia('(prefers-reduced-motion:reduce)').matches||!this.route?.route_segments.length||this.engine.destroyed)return;
       const patterns=[[0,4,3],[1,4,2],[2,4,1],[3,4,0]];
       map.setPaintProperty('study-route-flow','line-dasharray',patterns[phase++%patterns.length]);
-    },240);
+    },650);
     map.resize();
   }
 
@@ -83,7 +82,7 @@ window.StudyRouteMap = class StudyRouteMap {
     svg.querySelector('#flatPoints').style.display='none';
     const boundary=this.flatGroups[0];
     for(const feature of this.catalog.boundaries.features){
-      const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',this.engine.path(feature.geometry));path.setAttribute('fill','#16314644');path.setAttribute('stroke','#7c9db7');path.setAttribute('stroke-width','.8');path.setAttribute('vector-effect','non-scaling-stroke');boundary.append(path);
+      const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',this.engine.path(feature.geometry));path.setAttribute('fill','#B99A6510');path.setAttribute('stroke','#B99A65');path.setAttribute('stroke-width','.8');path.setAttribute('vector-effect','non-scaling-stroke');boundary.append(path);
     }
     this.observer=new MutationObserver(this.move);this.observer.observe(svg,{attributes:true,attributeFilter:['viewBox']});
     svg.addEventListener('pointerdown',this.interrupt);svg.addEventListener('wheel',this.interrupt);
@@ -151,10 +150,10 @@ window.StudyRouteMap = class StudyRouteMap {
       current.add(group.key);
       let marker=this.markers.get(group.key);
       if(!marker){
-        const button=document.createElement('button');button.className='ex-pin study-route-pin';button.style.setProperty('--category-color','#f1cf86');
-        button.innerHTML='<i></i><span class="beam"></span><b></b>';
+        const button=document.createElement('button');button.className='ex-pin study-route-pin';button.style.setProperty('--category-color','#B99A65');
+        button.innerHTML='<b></b>';
         button.addEventListener('click',event=>{event.stopPropagation();this.actions.pause();const live=this.selectedGroups().find(item=>item.key===group.key);if(live)this.chooseGroup(live);});
-        marker=new maplibregl.Marker({element:button,anchor:'bottom'}).setLngLat(group.coordinates).addTo(this.map);this.markers.set(group.key,marker);
+        marker=new maplibregl.Marker({element:button,anchor:'center'}).setLngLat(group.coordinates).addTo(this.map);this.markers.set(group.key,marker);
       }
       const button=marker.getElement();
       button.querySelector('b').textContent=group.orders.length>1?group.orders[0]+'+':group.orders[0];
@@ -165,7 +164,6 @@ window.StudyRouteMap = class StudyRouteMap {
       button.dataset.precision=group.records[0].routeLocation.grade;
     }
     for(const [key,marker] of this.markers)if(!current.has(key)){marker.remove();this.markers.delete(key);}
-    this.terrain=this.engine.terrain;
     this.map.triggerRepaint();
   }
 
@@ -202,7 +200,7 @@ window.StudyRouteMap = class StudyRouteMap {
         if(!segments.length)continue;
         const path=document.createElementNS(this.engine.svg.namespaceURI,'path');
         path.setAttribute('d',segments.map(segment=>segment.geometry.coordinates.map((point,index)=>(index?'L':'M')+this.engine.project(point).join(',')).join(' ')).join(' '));
-        path.setAttribute('fill','none');path.setAttribute('stroke',route.route_id===this.route.route_id?'#f0cc84':'#5993aa');path.setAttribute('stroke-width',route.route_id===this.route.route_id?'2.5':'1.5');path.setAttribute('vector-effect','non-scaling-stroke');
+        path.setAttribute('fill','none');path.setAttribute('stroke',route.route_id===this.route.route_id?'#D4B16F':'#B99A65');path.setAttribute('stroke-width',route.route_id===this.route.route_id?'2.5':'1.5');path.setAttribute('vector-effect','non-scaling-stroke');
         if(status==='schematic')path.setAttribute('stroke-dasharray','6 5');
         path.classList.add('study-flat-route');container.append(path);
       }
@@ -289,7 +287,7 @@ window.StudyRouteMap = class StudyRouteMap {
     this.engine.studyMode=false;
     if(this.map&&!this.engine.destroyed){
       for(const [event,layer,callback] of this.handlers){if(layer)this.map.off(event,layer,callback);else this.map.off(event,callback);}
-      for(const id of ['study-route-models','study-route-flow','study-route-schematic','study-route-roads','study-route-glow','study-selected','study-library-points','study-library-counts','study-library-clusters','study-boundaries'])if(this.map.getLayer(id))this.map.removeLayer(id);
+      for(const id of ['study-route-flow','study-route-schematic','study-route-roads','study-route-glow','study-selected','study-library-points','study-library-counts','study-library-clusters','study-boundaries'])if(this.map.getLayer(id))this.map.removeLayer(id);
       for(const id of ['study-route-lines','study-selected','study-library','study-boundaries'])if(this.map.getSource(id))this.map.removeSource(id);
       for(const id of ['heritage-clusters','heritage-counts','context-points'])if(this.map.getLayer(id))this.map.setLayoutProperty(id,'visibility','visible');
       for(const marker of [...this.engine.markers.values(),...this.engine.clusterMarkers.values()])marker.getElement().hidden=false;

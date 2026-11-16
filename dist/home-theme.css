@@ -1,0 +1,139 @@
+/* Homepage appearance retained from before the exhibition redesign. */
+@font-face {
+  font-family: Antl;
+  src: url(title.woff2) format('woff2');
+  font-display: swap;
+}
+:root {
+  --red: #a32c32;
+  --background: #251d1a;
+  --wine: #581b20;
+  --wine-light: #82242a;
+  --forest: #424637;
+  --cyan: #b49a6b;
+  --gold: #b49a6b;
+  --gold-light: #cfb78c;
+  --text: #ede2d2;
+  --muted: #bdac97;
+  --line: #a68b5c40;
+  --panel-border: #a68b5c40;
+}
+body { background: #251d1a; color: var(--text); }
+.site-logo {
+  background: url(assets/brand-title.webp) center / contain no-repeat;
+  display: block;
+  mix-blend-mode: screen;
+}
+.site-logo::before { content: none; }
+.museum-header {
+  background: linear-gradient(#651e2445, #651e2460), url(assets/red-ribbon.png) center / cover no-repeat, #651e24;
+  border-bottom: 1px solid #a68b5c70;
+  backdrop-filter: none;
+}
+.museum-header .museum-nav a { color: #ded0bb; }
+.museum-header .museum-nav a.active { color: #e4cda4; }
+.museum-header .museum-nav a.active::after { background: #b49a6b; box-shadow: none; }
+.museum-hero {
+  background: linear-gradient(180deg, #88272c 0, #632327 210px, #352320 48%, #30221f 78%, #571f23);
+  border-bottom: 2px solid #8c3734;
+}
+.museum-hero::before, .museum-hero::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  background: url(assets/red-ribbon.png) center / 100% 100% no-repeat;
+  filter: saturate(.7) brightness(.65);
+}
+.museum-hero::before { display: none; }
+.museum-hero::after { bottom: -76px; height: 255px; opacity: .65; z-index: 2; }
+.hero-heading { top: 30px; left: 26%; right: 26%; mix-blend-mode: screen; }
+.museum-home .hero-heading h1 { filter: none; text-shadow: none; }
+.hero-title-art {
+  display: block;
+  width: 100%;
+  height: clamp(86px, 8.4vw, 128px);
+  background: url(assets/brand-title.webp) center / contain no-repeat;
+}
+.hero-heading .museum-eyebrow { color: #d9c09a; }
+.hero-subtitle { color: #d4bda0; margin-top: 6px; }
+.hero-soldiers {
+  position: absolute;
+  left: 0;
+  bottom: 155px;
+  width: clamp(180px, 24vw, 380px);
+  aspect-ratio: 3 / 2;
+  z-index: 2;
+  background: url(assets/antl-soldiers-matte.png) left bottom / contain no-repeat;
+  opacity: .65;
+  pointer-events: none;
+}
+.glass-panel {
+  border-color: var(--line);
+  border-radius: 3px;
+  background: #442624ed;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.hero-data { border-top: 3px solid #9e3838; padding: 18px 20px; }
+.hero-data > .museum-eyebrow {
+  margin: -5px -8px 9px;
+  padding: 8px 4px;
+  background: #72272a;
+  color: #dcc6a2;
+}
+.hero-total strong, .hero-region-counts strong, .hero-data-footer strong { color: #c6ab79; }
+.hero-total { padding: 7px 0 14px; }
+.hero-region-counts a { padding: 6px 0; }
+.hero-data-footer { padding-top: 10px; }
+.rail-caption { color: #cfb99a; }
+.region-focus-button {
+  border-left-color: #a63e40;
+  background: linear-gradient(90deg, #7a292a80, transparent);
+  color: #dcc5a5;
+}
+.region-focus-button.active, .region-focus-button:hover {
+  background: #812c30;
+  border-color: #a78b5b70;
+  border-left-color: #b49a6b;
+  color: #ead7b7;
+}
+.gold-button { background: #9b3034; color: #eddec3; border-color: #b39465; box-shadow: none; }
+.gold-button:hover { background: #ad3b3e; filter: none; }
+.hero-bottom { border-top-color: #af8e5b70; }
+.hero-intro p { color: #dec6a3; }
+.hero-intro > span, .map-provenance { color: #c1a58f; }
+.data-orbit { box-shadow: none; }
+.chart-fill { background: linear-gradient(90deg, #782329, #b64b46); }
+.section-intro h2, .about-section h2 { color: #d9c4a3; }
+.section-intro > div { padding-left: 17px; border-left: 4px solid #a43438; }
+.province-entry-grid .region-card { background: #442522; border-radius: 3px; border-color: var(--line); }
+.province-entry-grid .region-card h3 { color: #d8c19b; border-left: 3px solid #a83b3e; padding-left: 10px; }
+.museum-footer { border-top-color: #8b3938; }
+@media (min-width: 1800px) {
+  .hero-heading { top: 30px; }
+}
+@media (max-width: 900px) {
+  .hero-title-art { font-size: 68px; }
+  .hero-heading { left: 23%; right: 23%; }
+}
+@media (max-width: 700px) {
+  .hero-heading { top: 30px; left: 12px; right: 12px; }
+  .hero-title-art { font-size: clamp(48px, 13vw, 76px); height: 100px; }
+  .museum-home .museum-hero { min-height: 1030px; }
+  .hero-soldiers { width: 140px; bottom: 135px; opacity: .65; }
+  .museum-hero::before { height: 255px; top: -35px; }
+  .museum-hero::after { bottom: -50px; height: 230px; }
+  .hero-data > .museum-eyebrow { margin: 0; padding: 0; background: none; }
+  .hero-data { padding: 14px 16px; }
+  .hero-total { padding: 0; }
+  .hero-region-counts a { padding: 0; }
+  .site-logo::before { font-size: 28px; }
+  .region-focus-button {
+    background: #70292d;
+    padding: 9px 5px;
+    font-size: clamp(10px, 2.9vw, 13px);
+    white-space: nowrap;
+  }
+}

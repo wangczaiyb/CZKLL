@@ -12,7 +12,7 @@ class ExhibitFlatMap {
     container.replaceChildren();
     this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     this.svg.setAttribute('aria-label', store.database.metadata.fullName + '本地二维行政区划地图');
-    this.svg.style.cssText = 'width:100%;height:100%;background:#101e32;touch-action:none';
+    this.svg.style.cssText = 'width:100%;height:100%;background:#E4D8C5;touch-action:none';
     this.svg.innerHTML = '<g id="flatCities"></g><g id="flatCounties"></g><g id="flatNames"></g><g id="flatScope"></g><g id="flatPoints"></g><g id="flatRoute"></g>';
     container.append(this.svg);
     this.drawBoundaries();
@@ -65,14 +65,14 @@ class ExhibitFlatMap {
         target.append(path);
       }
     };
-    add('#flatCities', this.store.database.cities.features, '#19344a', '#5aa2bb', 1.3);
-    add('#flatCounties', this.store.database.counties.features, 'none', '#C2C8D6', 0.4);
+    add('#flatCities', this.store.database.cities.features, '#D3D7C8', '#B99A65', 1.3);
+    add('#flatCounties', this.store.database.counties.features, 'none', '#A69E90', 0.4);
     for (const feature of this.store.database.cities.features) {
       const point = this.project(feature.properties.centroid);
       const label = document.createElementNS(this.svg.namespaceURI, 'text');
       label.textContent = feature.properties.name;
       label.setAttribute('x', point[0]); label.setAttribute('y', point[1]);
-      label.setAttribute('fill', '#ead2a0'); label.setAttribute('text-anchor', 'middle');
+      label.setAttribute('fill', '#39322F'); label.setAttribute('text-anchor', 'middle');
       label.setAttribute('font-size', '17'); this.svg.querySelector('#flatNames').append(label);
     }
   }

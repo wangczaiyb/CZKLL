@@ -63,6 +63,8 @@ for name,slug,theme,description,image in regions:
 (dist/'index.html').write_text(home.replace('{{CARDS}}',''.join(cards)),encoding='utf8')
 for page in dist.glob('*.html'):
     text=page.read_text(encoding='utf8')
+    if 'heritage-theme.css' not in text and 'home-theme.css' not in text:
+        text=text.replace('</head>','<link rel="stylesheet" href="heritage-theme.css"></head>',1)
     if 'rel="icon"' not in text:
         text=text.replace('<head>','<head><link rel="icon" href="data:,">',1)
     def version_asset(match):

@@ -103,7 +103,7 @@ class ExhibitExperience {
         button.addEventListener('mouseenter', () => this.map.pointPopup(record, coordinates));
         button.addEventListener('mouseleave', () => { this.map.hoverTimer = setTimeout(() => this.map.popup?.remove(), 400); });
         button.addEventListener('click', event => { event.stopPropagation(); this.actions.select(record.id, true); });
-        const marker = new maplibregl.Marker({element: button, anchor: 'bottom', offset: [0, -38]}).setLngLat(coordinates).addTo(this.map.map);
+        const marker = new maplibregl.Marker({element: button, anchor: 'bottom', offset: [0, -12]}).setLngLat(coordinates).addTo(this.map.map);
         this.photoMarkers.set(record.id, marker);
         image.addEventListener('error', () => { marker.remove(); this.photoMarkers.delete(record.id); }, {once: true});
       }

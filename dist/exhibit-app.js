@@ -6,6 +6,7 @@
   const photo = record => HeritageImages.get(record)?.src;
   const isLocated = record => record.longitude !== null && record.latitude !== null;
   let activeTab = 'intro';
+  let renderedArchiveId;
   const noteDrafts = new Map();
   let experience;
   const virtualList = new VirtualRecordList($('exResults'), renderRecord, selectRecord, firstIndex => {
@@ -174,6 +175,10 @@
     });
     $('showAvailableVr')?.addEventListener('click', showVr);
     $('exDetail').querySelectorAll('[data-person]').forEach(button => button.addEventListener('click', () => search(button.dataset.person)));
+    if (renderedArchiveId !== record.id && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      $('exDetail').animate([{opacity: 0.6, transform: 'translateX(10px)'}, {opacity: 1, transform: 'translateX(0)'}], {duration: 320, easing: 'ease-out'});
+    }
+    renderedArchiveId = record.id;
   }
 
   function syncFilters() {
@@ -289,6 +294,40 @@
     const record = store.byId.get(store.selected);
     openDialog(`<h2>时空对读 · ${escape(record.name)}</h2><div class="compare-banner">当前档案已收录 ${photo(record) ? '1 张资料影像' : '文字资料'}，历史影像配对待补充。</div>${photo(record) ? `<img data-image-asset="${escape(record.image)}" src="${photo(record)}" alt="${escape(record.imageCaption)}"><p>${escape(record.imageCaption)}</p>` : ''}<h3>台账中的历史记忆</h3><p>${escape(record.background || '历史简介待补充')}</p>`);
   });
+  $('archiveOpen').addEventListener('click', () => {
+    openDialog(`<h2>全部遗址档案</h2><div class="archive-library-filters"><input id="archiveLibraryQuery" type="search" aria-label="全部档案检索" placeholder="检索遗址、城市、人物与事件"><select id="archiveLibraryProvince" aria-label="全部档案省区"><option value="">全部省区</option>${['黑龙江', '吉林', '辽宁', '内蒙古'].map(name => `<option value="${name}">${name === '内蒙古' ? '内蒙古东部' : name}</option>`).join('')}</select></div><div id="archiveLibraryList" class="archive-library-list"></div><div class="archive-library-pages"><button id="archiveLibraryPrev">上一页</button><span id="archiveLibraryCount" role="status"></span><button id="archiveLibraryNext">下一页</button></div>`);
+    let page = 0;
+    const render = () => {
+      const query = $('archiveLibraryQuery').value.trim().toLocaleLowerCase();
+      const province = $('archiveLibraryProvince').value;
+      const records = STUDY_ROUTE_CATALOG.records.filter(record => {
+        const text = [record.name, record.city, record.address, record.background_warning ? '' : record.background, ...record.people].join(' ').toLocaleLowerCase();
+        return (!province || record.province === province) && (!query || text.includes(query));
+      });
+      const pages = Math.max(1, Math.ceil(records.length / 20));
+      page = Math.min(page, pages - 1);
+      $('archiveLibraryList').innerHTML = records.length ? records.slice(page * 20, (page + 1) * 20).map(record => `<a class="cluster-item" data-archive-record="${escape(record.id)}" href="${escape(record.province_slug)}.html?site=${encodeURIComponent(record.id)}">${escape(record.name)}<small>${escape(record.province === '内蒙古' ? '内蒙古东部' : record.province)} · ${escape(record.city)} · ${escape(record.kind)}</small></a>`).join('') : '<p class="archive-empty">没有匹配的档案，请调整检索条件。</p>';
+      $('archiveLibraryCount').textContent = `${records.length} 条档案 · ${page + 1} / ${pages} 页`;
+      $('archiveLibraryPrev').disabled = page === 0;
+      $('archiveLibraryNext').disabled = page >= pages - 1;
+      $('archiveLibraryList').scrollTop = 0;
+    };
+    for (const id of ['archiveLibraryQuery', 'archiveLibraryProvince']) {
+      $(id).addEventListener(id === 'archiveLibraryQuery' ? 'input' : 'change', () => { page = 0; render(); });
+    }
+    $('archiveLibraryPrev').addEventListener('click', () => { page--; render(); });
+    $('archiveLibraryNext').addEventListener('click', () => { page++; render(); });
+    $('archiveLibraryList').addEventListener('click', event => {
+      const link = event.target.closest('[data-archive-record]');
+      if (!link || !store.byId.has(link.dataset.archiveRecord)) return;
+      event.preventDefault();
+      selectRecord(link.dataset.archiveRecord, true);
+      $('exDialog').close();
+    });
+    render();
+    $('archiveLibraryQuery').focus();
+  });
+
   $('guideOpen').addEventListener('click', () => {
     openDialog(`<h2>智能导览 · 本地档案检索</h2><p>输入遗址、人物、城市或事件关键词，在完整${escape(region.name)}台账中检索。可查询“烈士”“纪念馆”“密营”。</p><input id="guideQuery" aria-label="导览检索词" placeholder="输入关键词"><div id="guideResults"></div><p class="data-source">当前采用本地关键词检索，结果来自原台账。</p>`);
     const input = $('guideQuery');

@@ -1,0 +1,7 @@
+{
+  "generator": "Built-in ImageGen",
+  "reference": "用户提供的 8.jpg",
+  "output": "antl-soldiers-matte.png",
+  "transparent_background": true,
+  "prompt": "Use case: background-extraction. Edit target: the attached reference image of four Northeast Anti-Japanese United Army winter soldiers in red silhouette, carrying period rifles. Create a clean transparent PNG cutout preserving the reference composition, number of figures, silhouettes, winter hats, coats, poses, rifles and curved lower edge exactly. Remove the baked white/gray checkerboard completely to genuine transparent alpha outside all figures and between them. Redraw only the bright luminous cream/gold contours as thin matte antique-gold outlines in #b49a6b. Fill silhouettes with deep matte revolutionary red #81272c. Remove all glow, halo, light bloom and shiny edges. Restrained solemn historical woodcut style for the left side of a website title banner. Tight landscape composition, fully visible figures, no text, no new elements, no background, actual transparency."
+}

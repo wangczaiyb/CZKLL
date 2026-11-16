@@ -1,13 +1,13 @@
 /* Display categories are derived. The original workbook kind is always retained. */
 const EXHIBIT_DESIGN = {
-  colors: {red: '#C82423', background: '#0F1A30', forest: '#24633A', boundary: '#39D8FF', text: '#FFFFFF', secondary: '#C2C8D6'},
+  colors: {red: '#963D3D', background: '#F2EDE3', forest: '#697B69', boundary: '#B99A65', text: '#39322F', secondary: '#80776B'},
   categories: [
-    {id: 'site', name: '遗址遗迹', color: '#B81C26', chart: '#C82423', symbol: '⌂'},
-    {id: 'cemetery', name: '烈士陵园', color: '#B88A20', chart: '#D4A428', symbol: '▰'},
-    {id: 'facility', name: '纪念设施/牌塔', color: '#1868A8', chart: '#2286C8', symbol: '▥'},
-    {id: 'museum', name: '展览场馆', color: '#622B92', chart: '#7538AD', symbol: '▤'},
-    {id: 'monument', name: '纪念塔纪念碑', color: '#1E8838', chart: '#289940', symbol: '▴'},
-    {id: 'other', name: '其他及复合类别', color: '#64748B', chart: '#64748B', symbol: '···'}
+    {id: 'site', name: '遗址遗迹', color: '#76252D', chart: '#963D3D', symbol: '⌂'},
+    {id: 'cemetery', name: '烈士陵园', color: '#B99A65', chart: '#B99A65', symbol: '▰'},
+    {id: 'facility', name: '纪念设施/牌塔', color: '#80776B', chart: '#A08E75', symbol: '▥'},
+    {id: 'museum', name: '展览场馆', color: '#8B7269', chart: '#8B7269', symbol: '▤'},
+    {id: 'monument', name: '纪念塔纪念碑', color: '#697B69', chart: '#697B69', symbol: '▴'},
+    {id: 'other', name: '其他及复合类别', color: '#9C9689', chart: '#9C9689', symbol: '···'}
   ],
   kindMap: {
     '遗址遗迹': 'site', '故居': 'site', '故居旧址': 'site', '旧居': 'site', '故居建筑（迁建）': 'site',
